@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome</title>
+    <meta name="description" content="Welcome">
+    <script src="/lib/aframe.min.js"></script>
+    <script src="/lib/aframe-ar.min.js"></script>
+    <!-- {script} -->
+  </head>
+  <body>
+        <a-scene embedded arjs='debugUIEnabled: false; sourceType: webcam; sourceWidth:960; sourceHeight:1280; displayWidth: 960; displayHeight: 1280; detectionMode: mono; maxDetectionRate: 30;'>
+          <a-assets timeout="30000">
+            <img id="bg" src="/img/<!-- {id} -->/1.png">
+            <img id="frame" src="/img/<!-- {id} -->/2.png">
+            <img id="fg" src="/img/<!-- {id} -->/3.png">
+          </a-assets>
+        <a-anchor hit-testing-enabled='true'>
+            <a-plane position="0 0 0" rotation="-90 0 0" width="4" height="4" color="#CCC"></a-plane>
+            <a-image src="#bg" scale="4 4 4" position="0 0.3 0" rotation="-90 0 0"></a-image>
+            <a-image src="#frame" scale="3 3 3" position="0 0.4 0" rotation="-90 0 0"></a-image>
+            <a-image src="#fg" scale="2 2 2" position="0 0.5 0" rotation="-90 0 0"></a-image>
+            <a-entity id="title" position="1 0.6 -0.4" rotation="-90 0 0" scale="3 3 1" text="value:<!-- {titleValue} -->;color:#990033"></a-entity>
+            <a-entity id="text" position="1.1 0.6 0" rotation="-90 0 0" scale="3 3 1" text="value:<!-- {textValue1} -->;color:#990033"></a-entity>
+            <a-entity id="text" position="1.1 0.6 0.3" rotation="-90 0 0" scale="3 3 1" text="value:<!-- {textValue2} -->;color:#990033"></a-entity>
+        </a-anchor>
+        <a-marker-camera type='pattern' url='/lib/pattern-marker1.patt'></a-marker-camera>
+        </a-scene>
+    </body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shopify/draggable@1.0.0-beta.8/lib/sortable.js"></script>
+    <style>
+        .template-image {
+            position: absolute;
+            height: 50%;
+            padding: 10px;
+        }
+
+        .preview-image {
+            height: 100px;
+            width: 100px;
+        }
+    </style>
+    <script type="module">
+        $(document).on('change', ':file', function () {
+            var input = $(this),
+                numFiles = input.get(0).files ? input.get(0).files.length : 1,
+                label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+        });
+        $(document).ready(function () {
+            $(':file').on('fileselect', function (event, numFiles, label) {
+                var input = $(this).parents('.input-group').find(':text'),
+                    log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+                if (input.length) {
+                    input.val(log);
+                } else {
+                    if (log) alert(log);
+                }
+            });
+        });
+
+        const sortable = new Sortable.default(document.querySelectorAll('#layers'), {
+            draggable: 'li'
+        });
+        let images = [...document.querySelectorAll('.template-image')];
+        sortable.on('sortable:sorted', (event) => {
+            let [oldImg, newImg] = [images[event.data.oldIndex], images[event.data.newIndex]];
+            [newImg.style['z-index'], oldImg.style['z-index']] = [oldImg.style['z-index'], newImg.style['z-index']];
+            [images[event.data.oldIndex], images[event.data.newIndex]] = [newImg, oldImg];
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="btn-group row">
+            <button type="button" class="btn btn-primary">Open</button>
+            <button type="button" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-primary">Create marker</button>
+        </div>
+        <div id="editor" class="row">
+            <div id="image-wrapper" class="card col-sm-6">
+                <div class="card-body">
+                    <img src="<!-- {image1} -->" class="template-image firstimg" id="img-first" style="z-index: 1">
+                    <img src="<!-- {image2} -->" class="template-image secondimg" id="img-second" style="z-index: 2">
+                    <img src="<!-- {image3} -->" class="template-image thirdimg" id="img-third" style="z-index: 3">
+                    <canvas id="template-canvas" style="z-index: 999"></canvas>
+                </div>
+            </div>
+            <div id="editor-controls" class="col-sm-6">
+                <form action="/create/upload" onsubmit="window.location.reload()" method="post"
+                    enctype="multipart/form-data">
+                    <div class="form-group p-4 card">
+                        <div class="row">Select images</div>
+                        <div class="row">
+                            <div class="input-group">
+                                <input type="number" name="id" style="display: none;" value="<!-- {id} -->">
+                                <label class="input-group-btn">
+                                    <span class="btn btn-primary">
+                                        Browse… <input type="file" name="images" style="display: none;" multiple="">
+                                    </span>
+                                </label>
+                                <input type="text" class="form-control" readonly="">
+                            </div>
+                        </div>
+                        <div class="row justify-content-end">
+                            <input type="submit" class="btn btn-primary col-sm-4" value="Create">
+                        </div>
+                    </div>
+                </form>
+                <div class="card p-4">
+                    <div>Arrange layers</div>
+                    <ul id="layers" class="list-group" tabindex="0">
+                        <li id="first-item" class="list-group-item" tabindex="0"> <img src="<!-- {image1} -->"
+                                class="preview-image firstimg" id="img-first-thumb"> <!-- {img-first-name} -->
+                        </li>
+                        <li id="second-item" class="list-group-item" tabindex="0"> <img src="<!-- {image2} -->"
+                                class="preview-image secondimg" id="img-second-thumb"> <!-- {img-second-name} -->
+                        </li>
+                        <li id="third-item" class="list-group-item" tabindex="0"> <img src="<!-- {image3} -->"
+                                class="preview-image thirdimg" id="img-third-thumb"> <!-- {img-third-name} -->
+                        </li>
+                    </ul>
+                    <div id="coords-input container">
+                        <div id="text-coords">
+                            <div>Title position</div>
+                            <input class="input-coords" id="text-x" type="number" value="0" min="0" max="512">
+                            <input class="input-coords" id="text-y" type="number" value="0" min="0" max="512">
+                            <input class="input-coords" id="text-w" type="number" value="0" min="0" max="256">
+                            <input class="input-coords" id="text-h" type="number" value="0" min="0" max="64">
+                        </div>
+                        <div id="text-coords">
+                            <div>Text position</div>
+                            <input class="input-coords" id="text-x" type="number" value="0" min="0" max="512">
+                            <input class="input-coords" id="text-y" type="number" value="0" min="0" max="512">
+                            <input class="input-coords" id="text-w" type="number" value="0" min="0" max="256">
+                            <input class="input-coords" id="text-h" type="number" value="0" min="0" max="64">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

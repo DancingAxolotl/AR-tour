@@ -18,7 +18,7 @@ function getIp() {
 }
 
 function getURLString(addr, id, title, text) {
-    return `https://${addr[0]}/display/0?id=${encodeURIComponent(id)}&title=${encodeURIComponent(title)}&text=${encodeURIComponent(text)}`;
+    return `https://${addr}/display/0?id=${encodeURIComponent(id)}&title=${encodeURIComponent(title)}&text=${encodeURIComponent(text)}`;
 }
 
 async function main(args) {
@@ -26,7 +26,7 @@ async function main(args) {
         console.log("Usage: generate <Title> <Text> <id> <path_to_file>");
     }
     let [title, text, id, path] = args;
-    let addr = "ec2-35-156-172-68.eu-central-1.compute.amazonaws.com";//getIp();
+    let addr = "ec2-35-156-172-68.eu-central-1.compute.amazonaws.com:3000";//getIp()[0];
     await QRCode.toFile(
         path+".tmp", 
         getURLString(addr, id, title, text),

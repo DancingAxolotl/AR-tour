@@ -64,4 +64,4 @@ app.post('/create/upload', upload.array('images', 3), function (req, res, next) 
 });
 
 console.log("Server starting...");
-https.createServer(credentials, app).listen(443);
+https.createServer(credentials, app).listen(3000);
